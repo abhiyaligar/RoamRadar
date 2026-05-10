@@ -54,12 +54,19 @@ class StopPublicRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 # Trip Schemas
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import date
+from uuid import UUID
+from schemas.stop import StopRead
+
 class TripBase(BaseModel):
     name: str
     description: Optional[str] = None
     start_date: date
     end_date: date
     cover_image_url: Optional[str] = None
+    is_public: bool = False
 
 class TripCreate(TripBase):
     pass
@@ -100,3 +107,8 @@ class TripPublicRead(BaseModel):
 class TripShareResponse(BaseModel):
     is_public: bool
     public_link_id: str
+    stops: List[StopRead] = []
+    total_budget: float = 0.0
+
+    class Config:
+        from_attributes = True
