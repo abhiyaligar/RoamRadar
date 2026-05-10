@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from api.routes import auth, users
+from api.routes import auth, users, trips, shared
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -20,6 +20,8 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(trips.router, prefix="/api/v1/trips", tags=["trips"])
+app.include_router(shared.router, prefix="/api/v1/shared", tags=["shared"])
 
 @app.get("/")
 def root():
