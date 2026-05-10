@@ -12,7 +12,7 @@ Base URL: `/api/v1`
 
 ### `POST /auth/token`
 - **Description:** Login and receive a JWT access token.
-- **Request Body:** OAuth2PasswordRequestForm (username, password).
+- **Request Body:** OAuth2PasswordRequestForm. Must explicitly include `username`, `password`, and `grant_type="password"`.
 - **Response:** `{ "access_token": "jwt...", "token_type": "bearer" }`
 
 ### `GET /users/me`

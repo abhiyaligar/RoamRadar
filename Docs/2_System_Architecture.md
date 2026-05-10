@@ -21,9 +21,9 @@ Traveloop follows a modern decoupled architecture. The frontend is a Single Page
 
 ### 2.2. Backend
 - **Framework:** FastAPI (Python) - chosen for high performance, async capabilities, and auto-generated API docs (Swagger).
-- **Authentication:** FastAPI Users or custom JWT implementation using `python-jose` and `passlib`.
+- **Authentication:** FastAPI Users or custom JWT implementation using `python-jose` and `passlib`. Note: Must use `bcrypt<4.0` due to compatibility issues with passlib.
 - **ORM:** SQLAlchemy (Async).
-- **Database Migrations:** Alembic.
+- **Database Migrations:** Alembic (using `postgresql+asyncpg` for app runtime, but parsed as `postgresql` sync driver in `env.py`).
 - **Cloud Storage SDK:** Boto3 for interacting with Supabase S3 buckets.
 
 ### 2.3. Database
