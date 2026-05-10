@@ -12,7 +12,7 @@ app = FastAPI(
 # Set all CORS enabled origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Adjust in production
+    allow_origins=["https://roamradar.vercel.app","https://roam-radar-theta.vercel.app","http://localhost:8000"], # Adjust in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
