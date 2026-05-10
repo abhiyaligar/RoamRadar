@@ -21,7 +21,7 @@ This schema is designed for PostgreSQL using SQLAlchemy ORM (and Alembic for mig
 | `hashed_password` | VARCHAR | NOT NULL | Password hash |
 | `full_name` | VARCHAR | NOT NULL | User's full name |
 | `profile_picture_url`| VARCHAR | NULL | S3 URL to avatar |
-| `created_at` | TIMESTAMP | DEFAULT NOW() | Account creation time |
+| `created_at` | TIMESTAMP WITH TIME ZONE | DEFAULT NOW() | Account creation time |
 
 ### `trips`
 | Column | Type | Constraints | Description |
@@ -34,8 +34,6 @@ This schema is designed for PostgreSQL using SQLAlchemy ORM (and Alembic for mig
 | `end_date` | DATE | NOT NULL | Trip end |
 | `cover_image_url` | VARCHAR | NULL | S3 URL for trip cover |
 | `is_public` | BOOLEAN | DEFAULT false | For public sharing link |
-| `public_link_id` | VARCHAR | UNIQUE, NULL | Short hash for public sharing |
-| `created_at` | TIMESTAMP | DEFAULT NOW() | |
 
 ### `stops`
 | Column | Type | Constraints | Description |
@@ -56,11 +54,9 @@ This schema is designed for PostgreSQL using SQLAlchemy ORM (and Alembic for mig
 | `id` | UUID | PRIMARY KEY | Unique activity ID |
 | `stop_id` | UUID | FOREIGN KEY (`stops.id`) | Belonging stop |
 | `name` | VARCHAR | NOT NULL | e.g. "Eiffel Tower" |
-| `category` | VARCHAR | NOT NULL | Transport, Stay, Meal, Activity |
-| `cost_amount` | DECIMAL | DEFAULT 0.00 | Cost estimation |
-| `currency` | VARCHAR | DEFAULT 'USD' | |
-| `scheduled_time` | TIMESTAMP | NULL | Specific time if planned |
-| `notes` | TEXT | NULL | |
+| `category` | ENUM | NOT NULL | Flight, Hotel, Food, Sightseeing, Transit, Other |
+| `cost_amount` | FLOAT | DEFAULT 0.00 | Cost estimation |
+| `scheduled_time` | TIMESTAMP WITH TIME ZONE | NULL | Timezone-aware date |
 
 ### `trip_shares` (Scalable Social Sharing)
 *Designed to be scalable for future "collaborator/editor" features.*
