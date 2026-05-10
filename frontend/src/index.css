@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #3b82f6; /* blue-500 */
+  --color-brand-secondary: #0ea5e9; /* sky-500 */
+  --color-brand-accent: #f59e0b; /* amber-500 */
+  --color-brand-dark: #0f172a; /* slate-900 */
+  --color-brand-light: #f8fafc; /* slate-50 */
+}
+
+/* Base layer for globals */
+@layer base {
+  :root {
+    --background: 210 40% 98%; /* slate-50 equivalent */
+    --foreground: 222 47% 11%; /* slate-900 equivalent */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 217 91% 60%; /* blue-500 */
+    --primary-foreground: 210 40% 98%;
+  }
+  
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] antialiased transition-colors duration-300;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-black/30 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400;
+  }
+}

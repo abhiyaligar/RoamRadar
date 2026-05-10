@@ -5,6 +5,7 @@
 ## Project Structure
 - **/Docs:** Comprehensive documentation including Product Requirements, System Architecture, Database Schema, API definitions, and Implementation History.
 - **/backend:** FastAPI application powering the REST API, PostgreSQL database models, and Alembic migrations.
+    - **Status:** Phase 1 (Core Itinerary Engine) is COMPLETE. Trips, Stops, and Activities CRUD logic is live.
 
 ## Getting Started
 

@@ -28,7 +28,7 @@ Base URL: `/api/v1`
 
 ### `POST /trips`
 - **Description:** Create a new trip.
-- **Request Body:** `{ "name": "...", "start_date": "...", "end_date": "..." }`
+- **Request Body:** `{ "name": "...", "description": "...", "start_date": "...", "end_date": "...", "cover_image_url": "...", "is_public": false }`
 - **Response:** `201 Created` Trip object.
 
 ### `GET /trips/{trip_id}`
@@ -60,8 +60,14 @@ Base URL: `/api/v1`
 
 ### `POST /stops/{stop_id}/activities`
 - **Description:** Add an activity to a stop.
-- **Request Body:** `{ "name": "Louvre Museum", "category": "Activity", "cost_amount": 20.00, "scheduled_time": "2026-06-15T10:00:00Z" }`
+- **Request Body:** `{ "name": "Louvre Museum", "category": "Sightseeing", "cost_amount": 20.00, "scheduled_time": "2026-06-15T10:00:00Z" }`
 - **Response:** `201 Created` Activity object.
+
+### `PUT /stops/{stop_id}/activities/{activity_id}`
+- **Description:** Update activity details.
+
+### `DELETE /stops/{stop_id}/activities/{activity_id}`
+- **Description:** Remove an activity from a stop.
 
 ## 5. Social & Sharing Endpoints (Scalable)
 
