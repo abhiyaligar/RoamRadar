@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from db.database import Base
 from core.config import settings
-from models.user import User  # Import User model so Alembic detects it
+import models  # Import the models module which loads User, Trip, Stop, Activity
 
 # add your model's MetaData object here
 # for 'autogenerate' support

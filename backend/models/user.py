@@ -2,6 +2,7 @@ import uuid
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from db.database import Base
 
 class User(Base):
@@ -13,3 +14,6 @@ class User(Base):
     full_name = Column(String, nullable=False)
     profile_picture_url = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    trips = relationship("Trip", back_populates="user", cascade="all, delete-orphan")
