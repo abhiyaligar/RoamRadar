@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List
-from datetime import date
+from pydantic import BaseModel, ConfigDict
+from datetime import date, datetime
+from typing import List, Optional
 from uuid import UUID
-from schemas.stop import StopRead
+from .stop import StopRead, StopPublicRead
 
+# Trip Schemas
 class TripBase(BaseModel):
     name: str
     description: Optional[str] = None
@@ -26,8 +27,31 @@ class TripUpdate(BaseModel):
 class TripRead(TripBase):
     id: UUID
     user_id: UUID
+    public_link_id: Optional[str] = None
+    created_at: datetime
     stops: List[StopRead] = []
-    total_budget: float = 0.0
+    
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+class TripCreateResponse(TripBase):
+    id: UUID
+    user_id: UUID
+    public_link_id: Optional[str] = None
+    created_at: datetime
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class TripPublicRead(BaseModel):
+    name: str
+    description: Optional[str] = None
+    start_date: date
+    end_date: date
+    stops: List[StopPublicRead] = []
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class TripShareResponse(BaseModel):
+    is_public: bool
+    public_link_id: Optional[str] = None
+    
+    model_config = ConfigDict(from_attributes=True)

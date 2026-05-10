@@ -1,6 +1,7 @@
 import uuid
-from sqlalchemy import Column, String, Date, Boolean, ForeignKey
+from sqlalchemy import Column, String, Date, Boolean, ForeignKey, DateTime, Text
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
 from db.database import Base
@@ -16,6 +17,8 @@ class Trip(Base):
     end_date = Column(Date, nullable=False)
     cover_image_url = Column(String, nullable=True)
     is_public = Column(Boolean, default=False)
+    public_link_id = Column(String, unique=True, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
     user = relationship("User", back_populates="trips")

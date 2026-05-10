@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 from uuid import UUID
@@ -22,6 +22,11 @@ class ActivityUpdate(BaseModel):
 class ActivityRead(ActivityBase):
     id: UUID
     stop_id: UUID
+    
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+class ActivityPublicRead(BaseModel):
+    name: str
+    category: ActivityCategory
+    
+    model_config = ConfigDict(from_attributes=True)
