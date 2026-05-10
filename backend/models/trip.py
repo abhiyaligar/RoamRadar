@@ -23,11 +23,11 @@ class Trip(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
-    user = relationship("User", back_populates="trips")
+    owner = relationship("User", back_populates="trips")
     stops = relationship("Stop", back_populates="trip", cascade="all, delete-orphan", order_by="Stop.order_index")
 
     @property
-    def total_budget(self) -> float:
+    def estimated_cost(self) -> float:
         total = 0.0
         # Check if stops are loaded to avoid async issues
         if "stops" in self.__dict__:

@@ -78,6 +78,11 @@ async def update_trip(
         raise HTTPException(status_code=404, detail="Trip not found")
     
     update_data = trip_in.model_dump(exclude_unset=True)
+    
+    # Auto-generate public_link_id if making public and it's missing
+    if update_data.get("is_public") is True and not trip.public_link_id:
+        update_data["public_link_id"] = str(uuid.uuid4())[:12]
+        
     for field, value in update_data.items():
         setattr(trip, field, value)
         

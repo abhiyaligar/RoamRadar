@@ -34,6 +34,7 @@ function App() {
           <Route path="/create-trip" element={<CreateTripPage />} />
           <Route path="/builder" element={<ItineraryBuilderPage />} />
           <Route path="/itinerary/:id" element={<ItineraryViewPage />} />
+          <Route path="/share/:public_link_id" element={<ItineraryViewPage />} />
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/checklist" element={<PackingChecklistPage />} />

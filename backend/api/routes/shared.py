@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+from typing import List
 
 from db.database import get_db
 from models.trip import Trip
@@ -9,6 +10,17 @@ from models.stop import Stop
 from schemas.trip import TripPublicRead
 
 router = APIRouter()
+
+@router.get("/community", response_model=List[TripPublicRead])
+async def get_community_trips(db: AsyncSession = Depends(get_db)):
+    """Fetch all public trips for the community feed."""
+    result = await db.execute(
+        select(Trip)
+        .where(Trip.is_public == True)
+        .options(selectinload(Trip.stops).selectinload(Stop.activities))
+        .order_by(Trip.created_at.desc())
+    )
+    return result.scalars().all()
 
 @router.get("/{public_link_id}", response_model=TripPublicRead)
 async def get_shared_trip(

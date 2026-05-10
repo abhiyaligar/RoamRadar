@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from api.routes import auth, users, trips, stops, activities, shared
+from api.routes import auth, users, trips, stops, activities, shared, communities, wishlist
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -25,6 +25,8 @@ app.include_router(trips.router, prefix="/api/v1/trips", tags=["trips"])
 app.include_router(stops.router, prefix="/api/v1/trips", tags=["stops"])
 app.include_router(activities.router, prefix="/api/v1/stops", tags=["activities"])
 app.include_router(shared.router, prefix="/api/v1/shared", tags=["shared"])
+app.include_router(communities.router, prefix="/api/v1/communities", tags=["communities"])
+app.include_router(wishlist.router, prefix="/api/v1/wishlist", tags=["wishlist"])
 
 @app.get("/")
 def root():

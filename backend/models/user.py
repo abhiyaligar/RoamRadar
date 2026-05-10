@@ -16,4 +16,7 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
-    trips = relationship("Trip", back_populates="user", cascade="all, delete-orphan")
+    trips = relationship("Trip", back_populates="owner", cascade="all, delete-orphan")
+    owned_communities = relationship("Community", back_populates="admin", cascade="all, delete-orphan")
+    joined_communities = relationship("CommunityMember", back_populates="user", cascade="all, delete-orphan")
+    wishlist_items = relationship("WishlistItem", back_populates="user", cascade="all, delete-orphan")
