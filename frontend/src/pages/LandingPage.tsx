@@ -54,19 +54,19 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-full max-w-xl mx-auto relative z-20"
+              className="w-full max-w-xl mx-auto relative z-20 px-2 sm:px-0"
             >
-              <div className="bg-white/15 backdrop-blur-xl border border-white/30 p-2 rounded-full flex items-center shadow-2xl transition-all focus-within:bg-white/20 focus-within:border-white/50">
-                <div className="flex-1 px-6">
+              <div className="bg-white/15 backdrop-blur-xl border border-white/30 p-1.5 sm:p-2 rounded-full flex items-center shadow-2xl transition-all focus-within:bg-white/20 focus-within:border-white/50">
+                <div className="flex-1 px-4 sm:px-6">
                   <input 
                     type="text" 
                     placeholder="Where are you traveling?" 
-                    className="w-full bg-transparent border-none text-white focus:outline-none placeholder-white/70 text-lg font-medium"
+                    className="w-full bg-transparent border-none text-white focus:outline-none placeholder-white/70 text-base sm:text-lg font-medium"
                   />
                 </div>
                 <Link to="/explore">
-                  <Button size="icon" className="rounded-full bg-blue-600 hover:bg-blue-500 w-12 h-12 shrink-0 border-none shadow-md text-white transition-transform hover:scale-105">
-                    <ArrowUpRight className="w-5 h-5" />
+                  <Button size="icon" className="rounded-full bg-blue-600 hover:bg-blue-500 w-10 h-10 sm:w-12 sm:h-12 shrink-0 border-none shadow-md text-white transition-transform hover:scale-105">
+                    <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                 </Link>
               </div>
@@ -132,13 +132,13 @@ export function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
             
             {/* Left: Comparison Cards */}
-            <div className="lg:col-span-5 relative py-6">
-              {/* Underlying Traditional Background Container */}
+            <div className="lg:col-span-5 relative py-6 flex flex-col items-center">
+              {/* Underlying Traditional Background Container for Desktop */}
               <div className="hidden md:block absolute inset-y-0 left-[15%] right-[-2rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-[40px] shadow-sm z-0"></div>
 
-              <div className="relative z-10 flex flex-col md:flex-row items-stretch">
+              <div className="relative z-10 flex flex-col md:flex-row items-stretch w-full gap-8 md:gap-0">
                 {/* RoamRadar+ Dark Card */}
-                <div className="bg-[#1A1C23] text-white rounded-[32px] p-8 shadow-2xl w-full md:w-[55%] shrink-0">
+                <div className="bg-[#1A1C23] text-white rounded-[32px] p-8 shadow-2xl w-full md:w-[55%] shrink-0 z-10 relative">
                   <h3 className="text-xl font-bold mb-1 flex items-center gap-2 tracking-wide">
                     <Globe className="w-5 h-5 text-blue-500" /> RoamRadar+
                   </h3>
@@ -165,8 +165,8 @@ export function LandingPage() {
                   </Link>
                 </div>
 
-                {/* Traditional Text Content (Side by Side) */}
-                <div className="hidden md:flex flex-col justify-center w-[45%] pl-8 pr-2 py-8 shrink-0">
+                {/* Traditional Text Content (Stacked on mobile, side-by-side on desktop) */}
+                <div className="flex flex-col justify-center w-full md:w-[45%] md:pl-8 md:pr-2 md:py-8 shrink-0 bg-slate-50 dark:bg-slate-900/50 md:bg-transparent md:dark:bg-transparent rounded-[32px] md:rounded-none p-8 md:p-0 border border-slate-200 md:border-none dark:border-slate-800">
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Traditional</h3>
                   <p className="text-slate-500 text-xs mb-6">Clunky spreadsheets.<br/>Endless guesswork.</p>
                   

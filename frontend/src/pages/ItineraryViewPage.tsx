@@ -206,8 +206,8 @@ export function ItineraryViewPage() {
                 </div>
               </div>
 
-              <div className="w-full mb-12">
-                <table className="w-full text-left">
+              <div className="w-full mb-12 overflow-x-auto pb-4">
+                <table className="w-full text-left min-w-[600px]">
                   <thead>
                     <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-sm">
                       <th className="pb-4 font-medium">Description</th>
@@ -226,8 +226,8 @@ export function ItineraryViewPage() {
                       { desc: 'Food & Dining Allowance', cat: 'Food', amt: 600 },
                     ].map((item, idx) => (
                       <tr key={idx} className="border-b border-slate-100 dark:border-slate-800/50">
-                        <td className="py-4 font-medium">{item.desc}</td>
-                        <td className="py-4 text-right text-slate-500">{item.cat}</td>
+                        <td className="py-4 font-medium pr-4">{item.desc}</td>
+                        <td className="py-4 text-right text-slate-500 pr-4">{item.cat}</td>
                         <td className="py-4 text-right">${item.amt.toFixed(2)}</td>
                       </tr>
                     ))}

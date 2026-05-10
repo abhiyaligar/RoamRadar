@@ -68,11 +68,42 @@ export function DashboardLayout() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 w-full lg:max-w-[calc(100vw-16rem)] overflow-y-auto bg-slate-50 dark:bg-slate-900">
+        <main className="flex-1 w-full lg:max-w-[calc(100vw-16rem)] overflow-y-auto bg-slate-50 dark:bg-slate-900 pb-20 lg:pb-0">
           <div className="p-4 md:p-8 min-h-full">
             <Outlet />
           </div>
         </main>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-2 safe-area-pb">
+        <nav className="flex justify-around items-center">
+          {[
+            { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+            { name: 'Trips', icon: Map, path: '/trips' },
+            { name: 'Explore', icon: Compass, path: '/explore' },
+            { name: 'Profile', icon: Settings, path: '/profile' },
+          ].map((link) => {
+            const Icon = link.icon;
+            const isActive = location.pathname === link.path;
+            
+            return (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={cn(
+                  'flex flex-col items-center justify-center p-2 rounded-xl transition-all',
+                  isActive 
+                    ? 'text-blue-600 dark:text-blue-400' 
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                )}
+              >
+                <Icon className={cn("w-6 h-6 mb-1", isActive ? "stroke-2" : "stroke-[1.5]")} />
+                <span className="text-[10px] font-medium">{link.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );
