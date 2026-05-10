@@ -9,6 +9,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const isAuthenticated = !!localStorage.getItem('token');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,17 +71,22 @@ export function Navbar() {
               ))}
             </ul>
             <div className="flex items-center gap-3">
-              <Link to="/login">
-                <Button variant="ghost" className="hidden lg:flex">Sign In</Button>
-              </Link>
-              <Link to="/login">
-                <Button className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white">Sign Up</Button>
-              </Link>
-              <Link to="/profile">
-                <Button variant="ghost" size="icon" className="rounded-full bg-slate-100 dark:bg-slate-800 ml-2">
-                  <User className="w-5 h-5" />
-                </Button>
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link to="/login">
+                    <Button variant="ghost" className="hidden lg:flex">Sign In</Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white">Sign Up</Button>
+                  </Link>
+                </>
+              ) : (
+                <Link to="/profile">
+                  <Button variant="ghost" size="icon" className="rounded-full bg-slate-100 dark:bg-slate-800 ml-2">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </Link>
+              )}
             </div>
           </nav>
 
@@ -120,22 +126,27 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="pt-4 border-t border-slate-800 space-y-3">
-                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full justify-center">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full justify-center bg-blue-600 text-white hover:bg-blue-700">
-                    Sign Up
-                  </Button>
-                </Link>
-                <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-center mt-2 text-slate-400">
-                    <User className="w-5 h-5 mr-2" />
-                    Profile
-                  </Button>
-                </Link>
+                {!isAuthenticated ? (
+                  <>
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full justify-center">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                      <Button className="w-full justify-center bg-blue-600 text-white hover:bg-blue-700">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-center mt-2 text-slate-400">
+                      <User className="w-5 h-5 mr-2" />
+                      Profile
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

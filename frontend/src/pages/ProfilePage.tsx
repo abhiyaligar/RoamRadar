@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Camera, MapPin, Award, Edit2, Shield, Settings, Bell, Heart, LogOut } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -8,12 +8,58 @@ import { useNavigate } from 'react-router-dom';
 
 export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState<{ full_name: string; email: string; profile_picture_url: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const API_URL = import.meta.env.VITE_API_URL || '/api/v1';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/users/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+        } else {
+           if (response.status === 401) {
+             localStorage.removeItem('token');
+             navigate('/login');
+           }
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProfile();
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -27,8 +73,8 @@ export function ProfilePage() {
             
             <div className="relative mt-8 mb-4">
               <img 
-                src={USER_PROFILE.avatar} 
-                alt={USER_PROFILE.name} 
+                src={user?.profile_picture_url || USER_PROFILE.avatar} 
+                alt={user?.full_name || USER_PROFILE.name} 
                 className="w-24 h-24 rounded-full border-4 border-white dark:border-slate-900 mx-auto object-cover relative z-10"
               />
               <button className="absolute bottom-0 right-[50%] translate-x-[45px] z-20 bg-blue-500 text-white p-1.5 rounded-full shadow-lg hover:bg-blue-600 transition-colors">
@@ -36,8 +82,8 @@ export function ProfilePage() {
               </button>
             </div>
             
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{USER_PROFILE.name}</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-6">{USER_PROFILE.username}</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{user?.full_name || USER_PROFILE.name}</h2>
+            <p className="text-slate-500 dark:text-slate-400 mb-6">{user?.email || USER_PROFILE.username}</p>
             
             <div className="flex justify-center gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="text-center">
@@ -141,7 +187,7 @@ export function ProfilePage() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Full Name</label>
                   <input 
                     type="text" 
-                    defaultValue={USER_PROFILE.name}
+                    defaultValue={user?.full_name || USER_PROFILE.name}
                     disabled={!isEditing}
                     className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed text-slate-900 dark:text-white"
                   />
@@ -150,7 +196,7 @@ export function ProfilePage() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Username</label>
                   <input 
                     type="text" 
-                    defaultValue={USER_PROFILE.username}
+                    defaultValue={user?.email || USER_PROFILE.username}
                     disabled={!isEditing}
                     className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed text-slate-900 dark:text-white"
                   />
@@ -159,7 +205,7 @@ export function ProfilePage() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
                   <input 
                     type="email" 
-                    defaultValue="alex.wander@example.com"
+                    defaultValue={user?.email || "alex.wander@example.com"}
                     disabled={!isEditing}
                     className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed text-slate-900 dark:text-white"
                   />

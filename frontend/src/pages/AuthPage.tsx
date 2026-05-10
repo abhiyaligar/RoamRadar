@@ -45,7 +45,7 @@ export function AuthPage() {
             const errData = JSON.parse(text);
             throw new Error(errData.detail || 'Invalid email or password');
           } catch (e) {
-            throw new Error('Server unavailable or failed to connect.');
+            throw new Error('Server unavailable or failed to connect.', { cause: e });
           }
         }
 
@@ -73,15 +73,15 @@ export function AuthPage() {
             const errData = JSON.parse(text);
             throw new Error(errData.detail || 'Registration failed');
           } catch (e) {
-            throw new Error('Server unavailable or failed to connect.');
+            throw new Error('Server unavailable or failed to connect.', { cause: e });
           }
         }
 
         setIsLogin(true);
         setError('Registration successful! Please log in.');
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during authentication.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred during authentication.');
     } finally {
       setIsLoading(false);
     }
