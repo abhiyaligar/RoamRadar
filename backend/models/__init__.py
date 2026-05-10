@@ -5,4 +5,5 @@ from .stop import Stop
 from .activity import Activity
 from .community import Community, CommunityMember
 from .wishlist import WishlistItem
+from .otp import UserOTP
 

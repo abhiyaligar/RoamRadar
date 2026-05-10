@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Boolean, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -13,7 +13,14 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     full_name = Column(String, nullable=False)
     profile_picture_url = Column(String, nullable=True)
+    mobile_number = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    additional_details = Column(JSON, nullable=True)
+    is_verified = Column(Boolean, default=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 
     # Relationships
     trips = relationship("Trip", back_populates="owner", cascade="all, delete-orphan")

@@ -26,6 +26,10 @@ from models.user import User
 from models.trip import Trip
 from models.stop import Stop
 from models.activity import Activity
+from models.wishlist import WishlistItem
+from models.community import Community, CommunityMember
+from models.otp import UserOTP
+
 
 # add your model's MetaData object here
 # for 'autogenerate' support

@@ -15,6 +15,8 @@ import { ItineraryViewPage } from './pages/ItineraryViewPage';
 import { PackingChecklistPage } from './pages/PackingChecklistPage';
 import { TripNotesPage } from './pages/TripNotesPage';
 import { CommunityPage } from './pages/CommunityPage';
+import { SharedTripPage } from './pages/SharedTripPage';
+
 
 function App() {
   return (
@@ -25,6 +27,10 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />
         </Route>
+
+        {/* Public Share Route — No auth required */}
+        <Route path="/share/:public_link_id" element={<SharedTripPage />} />
+
         
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -34,7 +40,7 @@ function App() {
           <Route path="/create-trip" element={<CreateTripPage />} />
           <Route path="/builder" element={<ItineraryBuilderPage />} />
           <Route path="/itinerary/:id" element={<ItineraryViewPage />} />
-          <Route path="/share/:public_link_id" element={<ItineraryViewPage />} />
+
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/checklist" element={<PackingChecklistPage />} />
