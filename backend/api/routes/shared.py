@@ -4,7 +4,8 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from db.database import get_db
-from models.trip import Trip, Stop
+from models.trip import Trip
+from models.stop import Stop
 from schemas.trip import TripPublicRead
 
 router = APIRouter()
@@ -36,7 +37,7 @@ async def get_shared_trip(
     # Manually build sanitized response to ensure no sensitive data leaks
     # This aligns with the requirement to build it manually
     return TripPublicRead(
-        trip_name=trip.name,
+        name=trip.name,
         description=trip.description,
         start_date=trip.start_date,
         end_date=trip.end_date,
