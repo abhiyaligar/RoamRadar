@@ -1,9 +1,24 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Heart, Share2, Copy, Users, Star } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
 export function CommunityPage() {
+  const [likedTrips, setLikedTrips] = useState<Set<number>>(new Set());
+
+  const toggleLike = (id: number) => {
+    setLikedTrips(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
   const publicTrips = [
     { id: 1, title: 'Backpacking Southeast Asia', author: 'Emma Walker', avatar: 'https://i.pravatar.cc/100?img=1', image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop', days: 14, likes: 342, copies: 89 },
     { id: 2, title: 'Swiss Alps Winter Retreat', author: 'David Chen', avatar: 'https://i.pravatar.cc/100?img=11', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=800&auto=format&fit=crop', days: 7, likes: 856, copies: 214 },
@@ -63,8 +78,11 @@ export function CommunityPage() {
                 <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full border border-white/20">
                   {trip.days} Days
                 </div>
-                <button className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:text-pink-500 transition-colors">
-                  <Heart className="w-4 h-4" />
+                <button 
+                  onClick={() => toggleLike(trip.id)}
+                  className={`absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-2 rounded-full shadow-lg transition-colors ${likedTrips.has(trip.id) ? 'text-pink-500' : 'hover:text-pink-500 text-slate-600 dark:text-slate-400'}`}
+                >
+                  <Heart className={`w-4 h-4 ${likedTrips.has(trip.id) ? 'fill-pink-500' : ''}`} />
                 </button>
               </div>
 
@@ -80,7 +98,7 @@ export function CommunityPage() {
 
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                   <div className="flex gap-4 text-sm text-slate-500 dark:text-slate-400">
-                    <span className="flex items-center gap-1"><Heart className="w-4 h-4 text-pink-500" /> {trip.likes}</span>
+                    <span className="flex items-center gap-1"><Heart className={`w-4 h-4 text-pink-500 ${likedTrips.has(trip.id) ? 'fill-pink-500' : ''}`} /> {trip.likes + (likedTrips.has(trip.id) ? 1 : 0)}</span>
                     <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {trip.copies}</span>
                   </div>
                   <div className="flex gap-2">

@@ -101,10 +101,10 @@ export function LandingPage() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { id: 1, name: 'INDIA', price: '$45/DAY', img: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=800&auto=format&fit=crop' },
-              { id: 2, name: 'CHINA', price: '$50/DAY', img: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=800&auto=format&fit=crop' },
-              { id: 3, name: 'UNITED STATES', price: '$125/DAY', img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=800&auto=format&fit=crop' },
-              { id: 4, name: 'JAPAN', price: '$90/DAY', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop' },
+              { id: 1, name: 'INDIA', price: '₹3,600/DAY', img: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=800&auto=format&fit=crop' },
+              { id: 2, name: 'CHINA', price: '₹4,000/DAY', img: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=800&auto=format&fit=crop' },
+              { id: 3, name: 'UNITED STATES', price: '₹10,000/DAY', img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=800&auto=format&fit=crop' },
+              { id: 4, name: 'JAPAN', price: '₹7,200/DAY', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop' },
             ].map((dest, i) => (
               <motion.div 
                 key={dest.id}

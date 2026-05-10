@@ -1,26 +1,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, Clock, DollarSign, Download, Share2, Receipt } from 'lucide-react';
+import { MapPin, Calendar, Clock, IndianRupee, Download, Share2, Receipt } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
 const BUDGET_DATA = [
-  { name: 'Flights', value: 850, color: '#3b82f6' },
-  { name: 'Accommodation', value: 1200, color: '#a855f7' },
-  { name: 'Activities', value: 450, color: '#f59e0b' },
-  { name: 'Food', value: 600, color: '#10b981' },
-  { name: 'Transport', value: 200, color: '#f43f5e' },
+  { name: 'Flights', value: 68000, color: '#3b82f6' },
+  { name: 'Accommodation', value: 96000, color: '#a855f7' },
+  { name: 'Activities', value: 36000, color: '#f59e0b' },
+  { name: 'Food', value: 48000, color: '#10b981' },
+  { name: 'Transport', value: 16000, color: '#f43f5e' },
 ];
 
 const DAILY_EXPENSES = [
-  { day: 'Day 1', amount: 150 },
-  { day: 'Day 2', amount: 200 },
-  { day: 'Day 3', amount: 350 },
-  { day: 'Day 4', amount: 120 },
-  { day: 'Day 5', amount: 180 },
-  { day: 'Day 6', amount: 250 },
-  { day: 'Day 7', amount: 100 },
+  { day: 'Day 1', amount: 12000 },
+  { day: 'Day 2', amount: 16000 },
+  { day: 'Day 3', amount: 28000 },
+  { day: 'Day 4', amount: 9600 },
+  { day: 'Day 5', amount: 14400 },
+  { day: 'Day 6', amount: 20000 },
+  { day: 'Day 7', amount: 8000 },
 ];
 
 export function ItineraryViewPage() {
@@ -44,8 +44,8 @@ export function ItineraryViewPage() {
                 <span>Oct 15 - Oct 22</span>
               </div>
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                <span>Total Est: $3,300</span>
+                <IndianRupee className="w-4 h-4" />
+                <span>Total Est: ₹2,64,000</span>
               </div>
             </div>
           </div>
@@ -116,7 +116,7 @@ export function ItineraryViewPage() {
                         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Walk through the thousands of vermilion torii gates.</p>
                         <div className="mt-3 flex gap-2">
                           <span className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-600 dark:text-slate-300">16:00 PM</span>
-                          <span className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-600 dark:text-slate-300 font-semibold">$0 (Free)</span>
+                          <span className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-600 dark:text-slate-300 font-semibold">₹0 (Free)</span>
                         </div>
                       </div>
                     </Card>
@@ -160,7 +160,7 @@ export function ItineraryViewPage() {
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
                     <div className="text-sm">
                       <p className="text-slate-500 dark:text-slate-400">{item.name}</p>
-                      <p className="font-bold text-slate-900 dark:text-white">${item.value}</p>
+                      <p className="font-bold text-slate-900 dark:text-white">₹{item.value}</p>
                     </div>
                   </div>
                 ))}
@@ -217,18 +217,18 @@ export function ItineraryViewPage() {
                   </thead>
                   <tbody className="text-slate-900 dark:text-white">
                     {[
-                      { desc: 'Roundtrip Flights (JAL)', cat: 'Transport', amt: 850 },
-                      { desc: 'Ryokan Stay (3 Nights)', cat: 'Accommodation', amt: 600 },
-                      { desc: 'Hotel Stay (4 Nights)', cat: 'Accommodation', amt: 600 },
-                      { desc: 'JR Pass (7 Days)', cat: 'Transport', amt: 200 },
-                      { desc: 'Universal Studios Pass', cat: 'Activities', amt: 120 },
-                      { desc: 'Guided Temple Tour', cat: 'Activities', amt: 80 },
-                      { desc: 'Food & Dining Allowance', cat: 'Food', amt: 600 },
+                      { desc: 'Roundtrip Flights (JAL)', cat: 'Transport', amt: 68000 },
+                      { desc: 'Ryokan Stay (3 Nights)', cat: 'Accommodation', amt: 48000 },
+                      { desc: 'Hotel Stay (4 Nights)', cat: 'Accommodation', amt: 48000 },
+                      { desc: 'JR Pass (7 Days)', cat: 'Transport', amt: 16000 },
+                      { desc: 'Universal Studios Pass', cat: 'Activities', amt: 9600 },
+                      { desc: 'Guided Temple Tour', cat: 'Activities', amt: 6400 },
+                      { desc: 'Food & Dining Allowance', cat: 'Food', amt: 48000 },
                     ].map((item, idx) => (
                       <tr key={idx} className="border-b border-slate-100 dark:border-slate-800/50">
                         <td className="py-4 font-medium pr-4">{item.desc}</td>
                         <td className="py-4 text-right text-slate-500 pr-4">{item.cat}</td>
-                        <td className="py-4 text-right">${item.amt.toFixed(2)}</td>
+                        <td className="py-4 text-right">₹{item.amt.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -239,15 +239,15 @@ export function ItineraryViewPage() {
                 <div className="w-64 space-y-3">
                   <div className="flex justify-between text-slate-500">
                     <span>Subtotal</span>
-                    <span>$3,050.00</span>
+                    <span>₹2,44,000.00</span>
                   </div>
                   <div className="flex justify-between text-slate-500">
                     <span>Tax & Fees (8%)</span>
-                    <span>$244.00</span>
+                    <span>₹19,520.00</span>
                   </div>
                   <div className="flex justify-between text-xl font-bold text-slate-900 dark:text-white pt-3 border-t border-slate-200 dark:border-slate-800">
                     <span>Total Cost</span>
-                    <span className="text-blue-500">$3,294.00</span>
+                    <span className="text-blue-500">₹2,63,520.00</span>
                   </div>
                 </div>
               </div>
