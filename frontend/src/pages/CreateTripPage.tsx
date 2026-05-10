@@ -1,31 +1,65 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, Calendar, Users, Image as ImageIcon, ArrowRight, PlaneTakeoff } from 'lucide-react';
+import { Map, Calendar, Users, Image as ImageIcon, ArrowRight, PlaneTakeoff, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { GlassContainer } from '../components/ui/GlassContainer';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../utils/api';
 
 export function CreateTripPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    start_date: '',
+    end_date: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) {
       setStep(step + 1);
     } else {
-      // Simulate trip creation
-      navigate('/builder');
+      setIsLoading(true);
+      setError(null);
+      try {
+        const trip = await api.post('/trips', {
+          name: formData.name,
+          description: formData.description,
+          start_date: formData.start_date,
+          end_date: formData.end_date,
+        });
+        // Success! Navigate to builder with the real ID
+        navigate(`/builder?trip_id=${trip.id}`);
+      } catch (err: any) {
+        setError(err.message || 'Failed to create trip');
+        setIsLoading(false);
+      }
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8">
+    <div className="max-w-3xl mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Plan a New Adventure</h1>
         <p className="text-slate-500 dark:text-slate-400">Let's start with the basics of your upcoming trip.</p>
       </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Progress Steps */}
       <div className="flex items-center justify-between mb-12 relative">
@@ -68,6 +102,9 @@ export function CreateTripPage() {
                     <Map className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input 
                       type="text" 
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
                       placeholder="e.g. Summer in Europe 2026" 
                       className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white"
                       required
@@ -79,6 +116,9 @@ export function CreateTripPage() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description (Optional)</label>
                   <textarea 
                     rows={3}
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
                     placeholder="Briefly describe what this trip is about..." 
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white resize-none"
                   />
@@ -103,6 +143,9 @@ export function CreateTripPage() {
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <input 
                         type="date" 
+                        name="start_date"
+                        value={formData.start_date}
+                        onChange={handleChange}
                         className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white"
                         required
                       />
@@ -114,6 +157,9 @@ export function CreateTripPage() {
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <input 
                         type="date" 
+                        name="end_date"
+                        value={formData.end_date}
+                        onChange={handleChange}
                         className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white"
                         required
                       />
@@ -168,16 +214,22 @@ export function CreateTripPage() {
 
           <div className="flex justify-between pt-6 border-t border-slate-100 dark:border-slate-800 mt-8">
             {step > 1 ? (
-              <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
+              <Button type="button" variant="outline" onClick={() => setStep(step - 1)} disabled={isLoading}>
                 Back
               </Button>
             ) : (
-              <div></div> // Empty div for spacing
+              <div></div>
             )}
             
-            <Button type="submit" className="group">
-              {step < 3 ? 'Continue' : 'Create & Build Itinerary'}
-              <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+            <Button type="submit" disabled={isLoading} className="group min-w-[140px]">
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  {step < 3 ? 'Continue' : 'Create & Build Itinerary'}
+                  <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </Button>
           </div>
         </form>

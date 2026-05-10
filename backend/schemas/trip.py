@@ -10,6 +10,8 @@ class TripBase(BaseModel):
     description: Optional[str] = None
     start_date: date
     end_date: date
+    total_budget: float = 0.0
+    member_limit: int = 1
     cover_image_url: Optional[str] = None
     is_public: bool = False
 
@@ -21,6 +23,8 @@ class TripUpdate(BaseModel):
     description: Optional[str] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
+    total_budget: Optional[float] = None
+    member_limit: Optional[int] = None
     cover_image_url: Optional[str] = None
     is_public: Optional[bool] = None
 

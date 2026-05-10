@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Date, Boolean, ForeignKey, DateTime, Text
+from sqlalchemy import Column, String, Date, Boolean, ForeignKey, DateTime, Text, Float, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -15,6 +15,8 @@ class Trip(Base):
     description = Column(String, nullable=True)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
+    total_budget = Column(Float, default=0.0)
+    member_limit = Column(Integer, default=1)
     cover_image_url = Column(String, nullable=True)
     is_public = Column(Boolean, default=False)
     public_link_id = Column(String, unique=True, nullable=True)

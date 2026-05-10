@@ -1,45 +1,216 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Map, GripVertical, Calendar, Clock, Plus, Trash2, MapPin, CreditCard } from 'lucide-react';
+import { GripVertical, Calendar, Clock, Plus, Trash2, MapPin, CreditCard, Loader2, ArrowLeft, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { Modal } from '../components/ui/Modal';
+import { ItineraryMap } from '../components/map/ItineraryMap';
+import { CitySearch } from '../components/map/CitySearch';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { api } from '../utils/api';
 
 export function ItineraryBuilderPage() {
-  // Mock internal state for the builder
-  const [stops, setStops] = useState([
-    { id: '1', city: 'Kyoto', country: 'Japan', days: 3, cost: 850 },
-    { id: '2', city: 'Tokyo', country: 'Japan', days: 4, cost: 1200 },
-  ]);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const tripId = searchParams.get('trip_id');
+
+  const [trip, setTrip] = useState<any>(null);
+  const [stops, setStops] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeStopId, setActiveStopId] = useState<string | null>(null);
+  const [newActivity, setNewActivity] = useState({
+    name: '',
+    category: 'Sightseeing',
+    cost_amount: 0
+  });
+
+  // Settings Modal State
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsData, setSettingsData] = useState({
+    total_budget: 0,
+    member_limit: 1,
+    is_public: false
+  });
+
+  useEffect(() => {
+    if (!tripId) {
+      navigate('/dashboard');
+      return;
+    }
+
+    const fetchTripData = async () => {
+      try {
+        const data = await api.get(`/trips/${tripId}`);
+        setTrip(data);
+        setStops(data.stops || []);
+        setSettingsData({
+          total_budget: data.total_budget || 0,
+          member_limit: data.member_limit || 1,
+          is_public: data.is_public || false
+        });
+      } catch (err) {
+        console.error('Failed to fetch trip:', err);
+        navigate('/dashboard');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTripData();
+  }, [tripId, navigate]);
+
+  const updateSettings = async () => {
+    setIsSaving(true);
+    try {
+      const updatedTrip = await api.put(`/trips/${tripId}`, settingsData);
+      setTrip(updatedTrip);
+      setIsSettingsOpen(false);
+    } catch (err) {
+      alert('Failed to update trip settings');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const copyPublicLink = () => {
+    if (!trip?.public_link_id) return;
+    const link = `${window.location.origin}/share/${trip.public_link_id}`;
+    navigator.clipboard.writeText(link);
+    alert('Public link copied to clipboard!');
+  };
+
+  const addCity = async (city: any) => {
+    if (!tripId) return;
+    
+    setIsSaving(true);
+    try {
+      const newStop = await api.post(`/trips/${tripId}/stops`, {
+        city_name: city.name,
+        country: city.country,
+        latitude: city.coordinates[1],
+        longitude: city.coordinates[0],
+        arrival_date: trip.start_date,
+        departure_date: trip.end_date,
+        order_index: stops.length
+      });
+      
+      setStops([...stops, newStop]);
+    } catch (err) {
+      alert('Failed to add city to database');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const removeStop = async (stopId: string) => {
+    if (!confirm('Are you sure you want to remove this city and all its activities?')) return;
+    setIsSaving(true);
+    try {
+      await api.delete(`/trips/${tripId}/stops/${stopId}`);
+      setStops(stops.filter(s => s.id !== stopId));
+    } catch (err) {
+      alert('Failed to delete stop');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleAddActivity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeStopId) return;
+
+    setIsSaving(true);
+    try {
+      const activity = await api.post(`/stops/${activeStopId}/activities`, {
+        ...newActivity,
+        scheduled_time: null
+      });
+      
+      setStops(stops.map(s => 
+        s.id === activeStopId 
+          ? { ...s, activities: [...(s.activities || []), activity] } 
+          : s
+      ));
+      setIsModalOpen(false);
+      setNewActivity({ name: '', category: 'Sightseeing', cost_amount: 0 });
+    } catch (err) {
+      alert('Failed to add activity');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deleteActivity = async (stopId: string, activityId: string) => {
+    setIsSaving(true);
+    try {
+      await api.delete(`/stops/${stopId}/activities/${activityId}`);
+      setStops(stops.map(s => 
+        s.id === stopId 
+          ? { ...s, activities: s.activities.filter((a: any) => a.id !== activityId) } 
+          : s
+      ));
+    } catch (err) {
+      alert('Failed to delete activity');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const moveStop = (index: number, direction: 'up' | 'down') => {
     if ((direction === 'up' && index === 0) || (direction === 'down' && index === stops.length - 1)) return;
-    
     const newStops = [...stops];
     const swapIndex = direction === 'up' ? index - 1 : index + 1;
     [newStops[index], newStops[swapIndex]] = [newStops[swapIndex], newStops[index]];
-    setStops(newStops);
+    setStops(newStops.map((s, i) => ({ ...s, order_index: i })));
   };
 
-  const removeStop = (id: string) => {
-    setStops(stops.filter(s => s.id !== id));
-  };
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <p className="text-slate-500 font-medium">Loading your adventure...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-full flex flex-col lg:flex-row gap-6">
+    <div className="h-full flex flex-col lg:flex-row gap-6 p-4">
       {/* Left Panel: Builder List */}
       <div className="w-full lg:w-1/2 flex flex-col h-full space-y-6">
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Trip Builder</h1>
-            <p className="text-sm text-slate-500">Plan your stops and activities</p>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate('/dashboard')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{trip?.name}</h1>
+              <p className="text-sm text-slate-500">Itinerary Builder</p>
+            </div>
           </div>
-          <Button size="sm" variant="outline">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Stop
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => setIsSettingsOpen(true)}>
+              Share & Settings
+            </Button>
+            {isSaving && (
+              <div className="flex items-center gap-2 text-xs text-blue-500 font-medium bg-blue-50 dark:bg-blue-500/10 px-3 py-1.5 rounded-full">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Saving...
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+        {/* New City Search Component */}
+        <div className="z-50">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Add a new destination</label>
+          <CitySearch onSelect={addCity} placeholder="Search for a city to add..." />
+        </div>
+
+        <div className="flex-1 overflow-y-auto space-y-4 pr-2 max-h-[60vh] lg:max-h-none">
           {stops.map((stop, index) => (
             <motion.div
               key={stop.id}
@@ -47,33 +218,19 @@ export function ItineraryBuilderPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="p-0 overflow-hidden border-2 border-transparent hover:border-blue-500/50 transition-colors">
+              <Card className="p-0 overflow-hidden border-2 border-transparent hover:border-blue-500/50 transition-colors shadow-sm">
                 <div className="flex items-center bg-slate-50 dark:bg-slate-800/80 p-3 border-b border-slate-200 dark:border-slate-700">
                   <div className="flex flex-col items-center gap-1 mr-3">
-                    <button 
-                      onClick={() => moveStop(index, 'up')}
-                      className={`p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 ${index === 0 ? 'opacity-30 cursor-not-allowed' : 'text-slate-500'}`}
-                    >
-                      ▲
-                    </button>
-                    <button 
-                      onClick={() => moveStop(index, 'down')}
-                      className={`p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 ${index === stops.length - 1 ? 'opacity-30 cursor-not-allowed' : 'text-slate-500'}`}
-                    >
-                      ▼
-                    </button>
+                    <button onClick={() => moveStop(index, 'up')} className={`p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 ${index === 0 ? 'opacity-30 cursor-not-allowed' : 'text-slate-500'}`}>▲</button>
+                    <button onClick={() => moveStop(index, 'down')} className={`p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 ${index === stops.length - 1 ? 'opacity-30 cursor-not-allowed' : 'text-slate-500'}`}>▼</button>
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-blue-500" />
-                      {stop.city}, {stop.country}
+                      {stop.city_name}, {stop.country}
                     </h3>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="text-right hidden sm:block">
-                      <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Est. Cost</p>
-                      <p className="font-bold text-slate-900 dark:text-white">${stop.cost}</p>
-                    </div>
                     <button onClick={() => removeStop(stop.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors">
                       <Trash2 className="w-5 h-5" />
                     </button>
@@ -84,29 +241,33 @@ export function ItineraryBuilderPage() {
                   <div className="flex items-center gap-4 mb-4">
                     <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg text-sm">
                       <Calendar className="w-4 h-4 text-blue-500" />
-                      <span className="font-medium text-slate-700 dark:text-slate-300">{stop.days} Days</span>
-                      <div className="flex gap-1 ml-2">
-                        <button className="w-6 h-6 flex items-center justify-center bg-white dark:bg-slate-700 rounded shadow-sm hover:text-blue-500">-</button>
-                        <button className="w-6 h-6 flex items-center justify-center bg-white dark:bg-slate-700 rounded shadow-sm hover:text-blue-500">+</button>
-                      </div>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">{new Date(stop.arrival_date).toLocaleDateString()}</span>
                     </div>
                   </div>
 
                   <div className="space-y-2 border-l-2 border-slate-200 dark:border-slate-800 ml-2 pl-4">
                     <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Activities</div>
-                    <div className="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg relative group">
-                      <GripVertical className="w-4 h-4 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 cursor-grab" />
-                      <div className="pl-4 flex-1">
-                        <p className="text-slate-900 dark:text-white font-medium text-sm">Visit Historic Temples</p>
-                        <div className="flex gap-3 text-xs text-slate-500 mt-1">
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 4 hrs</span>
-                          <span className="flex items-center gap-1"><CreditCard className="w-3 h-3" /> $25</span>
+                    {stop.activities?.map((activity: any) => (
+                      <div key={activity.id} className="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg group/activity">
+                        <div className="flex-1">
+                          <p className="text-slate-900 dark:text-white font-medium text-sm">{activity.name}</p>
+                          <div className="flex gap-3 text-xs text-slate-500 mt-1">
+                            <span className="flex items-center gap-1 font-semibold text-blue-500/80">{activity.category}</span>
+                            <span className="flex items-center gap-1"><CreditCard className="w-3 h-3" /> ${activity.cost_amount}</span>
+                          </div>
                         </div>
+                        <button 
+                          onClick={() => deleteActivity(stop.id, activity.id)}
+                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md opacity-0 group-hover/activity:opacity-100 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                      <button className="text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
-                    </div>
-                    
-                    <button className="text-sm text-blue-500 hover:text-blue-600 font-medium flex items-center gap-1 mt-2">
+                    ))}
+                    <button 
+                      onClick={() => { setActiveStopId(stop.id); setIsModalOpen(true); }}
+                      className="text-sm text-blue-500 hover:text-blue-600 font-medium flex items-center gap-1 mt-2"
+                    >
                       <Plus className="w-4 h-4" /> Add Activity
                     </button>
                   </div>
@@ -117,29 +278,119 @@ export function ItineraryBuilderPage() {
         </div>
       </div>
 
-      {/* Right Panel: Interactive Map Placeholder */}
-      <div className="hidden lg:block w-1/2 h-[calc(100vh-8rem)] sticky top-24 rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-800 relative bg-slate-100 dark:bg-slate-800">
-        <img 
-          src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1200&auto=format&fit=crop" 
-          alt="Map Interface Placeholder" 
-          className="w-full h-full object-cover opacity-80"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent flex flex-col justify-end p-8">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-white inline-block max-w-sm">
-            <h3 className="font-bold text-lg mb-1 flex items-center gap-2">
-              <Map className="w-5 h-5" /> Interactive Map View
-            </h3>
-            <p className="text-sm text-white/80">Connects with Mapbox or Leaflet to visualize your route, display city markers, and estimate travel times between stops.</p>
+      {/* Right Panel: Map */}
+      <div className="w-full lg:w-1/2 sticky top-24 h-[500px] lg:h-[calc(100vh-8rem)]">
+        <ItineraryMap stops={stops} />
+      </div>
+
+      {/* Activity Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Activity">
+        <form onSubmit={handleAddActivity} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Activity Name</label>
+            <input 
+              type="text" 
+              required
+              value={newActivity.name}
+              onChange={(e) => setNewActivity({ ...newActivity, name: e.target.value })}
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white"
+              placeholder="e.g. Visit Eiffel Tower"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
+              <select 
+                value={newActivity.category}
+                onChange={(e) => setNewActivity({ ...newActivity, category: e.target.value })}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white"
+              >
+                <option value="Sightseeing">Sightseeing</option>
+                <option value="Food">Food</option>
+                <option value="Flight">Flight</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Transit">Transit</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cost ($)</label>
+              <input 
+                type="number" 
+                value={newActivity.cost_amount}
+                onChange={(e) => setNewActivity({ ...newActivity, cost_amount: Number(e.target.value) })}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <Button type="button" variant="outline" className="flex-1" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">Add to Plan</Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Settings Modal */}
+      <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Trip Settings & Sharing">
+        <div className="space-y-8">
+          {/* Privacy Toggle */}
+          <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div>
+              <h4 className="font-bold text-slate-900 dark:text-white">Public Sharing</h4>
+              <p className="text-xs text-slate-500">Allow anyone with the link to view this trip</p>
+            </div>
+            <button 
+              onClick={() => setSettingsData({ ...settingsData, is_public: !settingsData.is_public })}
+              className={`w-12 h-6 rounded-full transition-colors relative ${settingsData.is_public ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-700'}`}
+            >
+              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settingsData.is_public ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+
+          {/* Public Link Display */}
+          {settingsData.is_public && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Shareable Link</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  readOnly 
+                  value={trip?.public_link_id ? `${window.location.origin}/share/${trip.public_link_id}` : 'Generating...'} 
+                  className="flex-1 px-3 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-600 dark:text-slate-400 outline-none"
+                />
+                <Button size="sm" onClick={copyPublicLink}>Copy</Button>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Trip Budget ($)</label>
+              <input 
+                type="number" 
+                value={settingsData.total_budget}
+                onChange={(e) => setSettingsData({ ...settingsData, total_budget: Number(e.target.value) })}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Member Limit</label>
+              <input 
+                type="number" 
+                min="1"
+                value={settingsData.member_limit}
+                onChange={(e) => setSettingsData({ ...settingsData, member_limit: Number(e.target.value) })}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button variant="outline" className="flex-1" onClick={() => setIsSettingsOpen(false)}>Cancel</Button>
+            <Button className="flex-1 bg-blue-600 hover:bg-blue-700" onClick={updateSettings}>Save Settings</Button>
           </div>
         </div>
-        
-        {/* Mock Map Markers & Route Line */}
-        <div className="absolute top-1/3 left-1/4 w-4 h-4 bg-blue-500 border-2 border-white rounded-full shadow-lg z-10" />
-        <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-blue-500 border-2 border-white rounded-full shadow-lg z-10" />
-        <svg className="absolute inset-0 w-full h-full pointer-events-none drop-shadow-md" style={{ zIndex: 5 }}>
-          <path d="M 25% 33% C 35% 40%, 45% 45%, 50% 50%" stroke="white" strokeWidth="3" strokeDasharray="6 6" fill="none" />
-        </svg>
-      </div>
+      </Modal>
     </div>
   );
 }

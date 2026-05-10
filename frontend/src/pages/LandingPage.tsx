@@ -158,7 +158,7 @@ export function LandingPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link to="/dashboard" className="block w-full mt-2">
+                  <Link to="/create-trip" className="block w-full mt-2">
                     <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white py-6 rounded-xl text-sm font-semibold tracking-wide transition-colors">
                       Start your journey
                     </Button>

@@ -22,8 +22,8 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(trips.router, prefix="/api/v1/trips", tags=["trips"])
-app.include_router(stops.router, prefix="/api/v1/stops", tags=["stops"])
-app.include_router(activities.router, prefix="/api/v1/activities", tags=["activities"])
+app.include_router(stops.router, prefix="/api/v1/trips", tags=["stops"])
+app.include_router(activities.router, prefix="/api/v1/stops", tags=["activities"])
 app.include_router(shared.router, prefix="/api/v1/shared", tags=["shared"])
 
 @app.get("/")
