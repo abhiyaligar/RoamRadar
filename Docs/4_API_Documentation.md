@@ -72,7 +72,29 @@ Base URL: `/api/v1`
 
 ### `GET /shared/{public_link_id}`
 - **Description:** Fetch a read-only version of a trip (No Auth required).
-- **Response:** `200 OK` Redacted Trip object (no private notes).
+- **Response:** `200 OK` Sanitized Trip object.
+  ```json
+  {
+    "trip_name": "Europe Trip",
+    "description": "My summer vacation",
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-15",
+    "stops": [
+      {
+        "city_name": "Paris",
+        "country": "France",
+        "arrival_date": "2026-06-01",
+        "departure_date": "2026-06-05",
+        "activities": [
+          {
+            "name": "Eiffel Tower",
+            "category": "Activity"
+          }
+        ]
+      }
+    ]
+  }
+  ```
 
 ### `POST /trips/{trip_id}/share/user`
 - **Description:** Share a trip directly with another registered user or via email invite.
