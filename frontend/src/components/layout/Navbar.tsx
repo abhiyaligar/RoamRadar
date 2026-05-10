@@ -30,7 +30,7 @@ export function Navbar() {
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent',
         isScrolled 
-          ? 'bg-slate-950/80 backdrop-blur-md border-slate-800 shadow-lg py-3' 
+          ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-slate-200 dark:border-slate-800 shadow-lg py-3' 
           : 'bg-transparent py-5'
       )}
     >
@@ -41,7 +41,7 @@ export function Navbar() {
             <div className="bg-gradient-to-br from-blue-500 to-sky-400 p-2 rounded-xl text-white group-hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-shadow">
               <Compass className="w-6 h-6" />
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300">
               Roam Radar
             </span>
           </Link>
@@ -54,8 +54,8 @@ export function Navbar() {
                   <Link
                     to={link.path}
                     className={cn(
-                      'text-sm font-medium transition-colors hover:text-blue-400 relative py-2',
-                      location.pathname === link.path ? 'text-blue-400' : 'text-slate-300'
+                      'text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 relative py-2',
+                      location.pathname === link.path ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'
                     )}
                   >
                     {link.name}
@@ -74,7 +74,7 @@ export function Navbar() {
               {!isAuthenticated ? (
                 <>
                   <Link to="/login">
-                    <Button variant="ghost" className="hidden lg:flex">Sign In</Button>
+                    <Button variant="ghost" className="hidden lg:flex text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Sign In</Button>
                   </Link>
                   <Link to="/login">
                     <Button className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white">Sign Up</Button>
@@ -92,7 +92,7 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden text-slate-300 hover:text-white"
+            className="md:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -107,7 +107,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-slate-900 border-b border-slate-800 shadow-xl md:hidden"
+            className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xl md:hidden"
           >
             <div className="flex flex-col p-4 space-y-4">
               {navLinks.map((link) => (
@@ -118,14 +118,14 @@ export function Navbar() {
                   className={cn(
                     'px-4 py-3 rounded-xl text-base font-medium transition-colors',
                     location.pathname === link.path 
-                      ? 'bg-blue-500/10 text-blue-400' 
-                      : 'text-slate-300 hover:bg-slate-800'
+                      ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' 
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                   )}
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-4 border-t border-slate-800 space-y-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
                 {!isAuthenticated ? (
                   <>
                     <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
@@ -141,7 +141,7 @@ export function Navbar() {
                   </>
                 ) : (
                   <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-center mt-2 text-slate-400">
+                    <Button variant="ghost" className="w-full justify-center mt-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
                       <User className="w-5 h-5 mr-2" />
                       Profile
                     </Button>
