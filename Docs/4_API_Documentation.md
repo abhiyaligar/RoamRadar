@@ -1,4 +1,4 @@
-# API Documentation - Traveloop
+# API Documentation - RoamRadar
 
 This document outlines the REST API endpoints built with **FastAPI**.
 Base URL: `/api/v1`

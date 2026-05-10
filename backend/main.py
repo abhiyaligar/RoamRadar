@@ -23,4 +23,4 @@ app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to the Traveloop API"}
+    return {"message": "Welcome to the RoamRadar API"}

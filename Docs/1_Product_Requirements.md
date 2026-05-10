@@ -1,8 +1,8 @@
-# Product Requirements Document (PRD) - Traveloop
+# Product Requirements Document (PRD) - RoamRadar
 
 ## 1. Overview
 ### Vision
-To become a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel. Traveloop empowers users to dream, design, and organize trips with ease by offering an end-to-end travel planning tool combining flexibility and interactivity.
+To become a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel. RoamRadar empowers users to dream, design, and organize trips with ease by offering an end-to-end travel planning tool combining flexibility and interactivity.
 
 ### Mission
 Build a user-centric, responsive application that simplifies the complexity of planning multi-city travel. Provide travelers with intuitive tools to:

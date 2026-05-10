@@ -1,6 +1,6 @@
-# Traveloop 🌍✈️
+# RoamRadar 🌍✈️
 
-**Traveloop** is a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel. Empowering users to dream, design, and organize multi-city trips with ease.
+**RoamRadar** is a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel. Empowering users to dream, design, and organize multi-city trips with ease.
 
 ## Project Structure
 - **/Docs:** Comprehensive documentation including Product Requirements, System Architecture, Database Schema, and API definitions.

@@ -1,4 +1,4 @@
-# Database Schema - Traveloop
+# Database Schema - RoamRadar
 
 This schema is designed for PostgreSQL using SQLAlchemy ORM (and Alembic for migrations). It heavily utilizes relational concepts to handle complex multi-city itineraries and budget tracking.
 

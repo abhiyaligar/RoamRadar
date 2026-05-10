@@ -1,7 +1,7 @@
-# System Architecture - Traveloop
+# System Architecture - RoamRadar
 
 ## 1. High-Level Architecture Overview
-Traveloop follows a modern decoupled architecture. The frontend is a Single Page Application (SPA) communicating with a robust backend API. The data layer is powered by a relational database, with external services handling map rendering and media storage.
+RoamRadar follows a modern decoupled architecture. The frontend is a Single Page Application (SPA) communicating with a robust backend API. The data layer is powered by a relational database, with external services handling map rendering and media storage.
 
 ### Client-Server Flow
 1. **Client:** Web browser (React app).
@@ -38,7 +38,7 @@ Traveloop follows a modern decoupled architecture. The frontend is a Single Page
 
 ## 3. MapBox Integration Strategy
 MapBox is selected over Google Maps for:
-1. **Design:** Highly customizable map styles that fit the "premium" feel of Traveloop.
+1. **Design:** Highly customizable map styles that fit the "premium" feel of RoamRadar.
 2. **Features:** Easy integration of lines (routes between cities), markers (stops), and popups (activities).
 3. **Cost:** Generous free tier for startups/hackathons.
 

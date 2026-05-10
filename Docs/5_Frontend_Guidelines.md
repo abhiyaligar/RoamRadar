@@ -1,4 +1,4 @@
-# Frontend Guidelines - Traveloop
+# Frontend Guidelines - RoamRadar
 
 This document establishes the patterns and guidelines for the **React** and **Tailwind CSS** frontend. The goal is to create a dynamic, premium, and highly responsive user interface.
 
