@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Star, Calendar, DollarSign, Clock, Heart, Share2, Map, CheckCircle2 } from 'lucide-react';
+import { MapPin, Star, Calendar, IndianRupee, Clock, Heart, Share2, Map, CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { DESTINATIONS } from '../data/mockData';
 
 export function DestinationDetailsPage() {
   const { id } = useParams();
+  const [isLiked, setIsLiked] = useState(false);
   
   // Find destination or use a default one for the placeholder
   const destination = DESTINATIONS.find(d => d.id === id) || DESTINATIONS[0];
@@ -45,7 +47,7 @@ export function DestinationDetailsPage() {
                 <span className="text-white/60">({destination.reviews} reviews)</span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
-                <DollarSign className="w-5 h-5" />
+                <IndianRupee className="w-5 h-5" />
                 <span className="font-semibold">Budget: {destination.budget}</span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
@@ -60,8 +62,13 @@ export function DestinationDetailsPage() {
           <Button variant="glass" size="icon" className="rounded-full h-12 w-12">
             <Share2 className="w-5 h-5" />
           </Button>
-          <Button variant="glass" size="icon" className="rounded-full h-12 w-12 text-pink-500 hover:bg-pink-500 hover:text-white hover:border-pink-500">
-            <Heart className="w-5 h-5" />
+          <Button 
+            variant="glass" 
+            size="icon" 
+            onClick={() => setIsLiked(!isLiked)}
+            className={`rounded-full h-12 w-12 hover:bg-pink-500 hover:text-white hover:border-pink-500 transition-colors ${isLiked ? 'text-pink-500 border-pink-500 bg-pink-500/20' : 'text-slate-300'}`}
+          >
+            <Heart className={`w-5 h-5 ${isLiked ? 'fill-pink-500 text-pink-500' : ''}`} />
           </Button>
         </div>
       </div>
@@ -119,8 +126,8 @@ export function DestinationDetailsPage() {
                     <span>Select Dates</span>
                   </div>
                   <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
-                    <DollarSign className="w-5 h-5 text-blue-500" />
-                    <span>Est. {destination.budget === '$' ? '$500' : destination.budget === '$$' ? '$1200' : '$2500+'} per person</span>
+                    <IndianRupee className="w-5 h-5 text-blue-500" />
+                    <span>Est. {destination.budget === '₹' ? '₹40,000' : destination.budget === '₹₹' ? '₹96,000' : '₹2,00,000+'} per person</span>
                   </div>
                 </div>
                 <Button size="lg" className="w-full">

@@ -253,7 +253,7 @@ export function ItineraryBuilderPage() {
                           <p className="text-slate-900 dark:text-white font-medium text-sm">{activity.name}</p>
                           <div className="flex gap-3 text-xs text-slate-500 mt-1">
                             <span className="flex items-center gap-1 font-semibold text-blue-500/80">{activity.category}</span>
-                            <span className="flex items-center gap-1"><CreditCard className="w-3 h-3" /> ${activity.cost_amount}</span>
+                            <span className="flex items-center gap-1"><CreditCard className="w-3 h-3" /> ₹{activity.cost_amount}</span>
                           </div>
                         </div>
                         <button 
@@ -314,7 +314,7 @@ export function ItineraryBuilderPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cost ($)</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cost (₹)</label>
               <input 
                 type="number" 
                 value={newActivity.cost_amount}
@@ -365,7 +365,7 @@ export function ItineraryBuilderPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Trip Budget ($)</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Trip Budget (₹)</label>
               <input 
                 type="number" 
                 value={settingsData.total_budget}

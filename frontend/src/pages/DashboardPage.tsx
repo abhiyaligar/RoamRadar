@@ -107,7 +107,7 @@ export function DashboardPage() {
                         <div className="mt-6">
                           <div className="flex justify-between text-xs mb-2">
                             <span className="text-slate-500 font-medium italic">"{trip.description || 'No description added'}"</span>
-                            <span className="text-slate-900 dark:text-white font-bold">${trip.total_budget || 0} Estimated</span>
+                            <span className="text-slate-900 dark:text-white font-bold">₹{trip.total_budget || 0} Estimated</span>
                           </div>
                           <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                             <motion.div 
@@ -198,7 +198,7 @@ export function DashboardPage() {
               <div className="text-center mb-6">
                 <p className="text-slate-500 text-sm mb-1 font-medium">Estimated Expenditure</p>
                 <p className="text-4xl font-bold text-slate-900 dark:text-white">
-                  ${trips.reduce((acc, curr) => acc + (curr.total_budget || 0), 0)}
+                  ₹{trips.reduce((acc, curr) => acc + (curr.total_budget || 0), 0)}
                 </p>
               </div>
               
